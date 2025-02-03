@@ -25,6 +25,7 @@ def create_app():
     login_manager.login_view = 'main.login'
 
     from app.models.cliente import Cliente
+    
     @login_manager.user_loader
     def load_user(id):
         return Cliente.query.get(int(id))

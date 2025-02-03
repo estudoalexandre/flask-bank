@@ -7,7 +7,8 @@ from app import db
     
 
 def criar_cliente(nome, cpf, email, senha):
-    cliente = Cliente(nome=nome, cpf=cpf, email=email, senha=senha)
+    cliente = Cliente(nome=nome, cpf=cpf, email=email)
+    cliente.set_senha(senha)
     db.session.add(cliente)
     db.session.commit()
     return cliente

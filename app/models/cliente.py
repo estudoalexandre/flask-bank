@@ -2,6 +2,7 @@ from app import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import UniqueConstraint
+
 class Cliente(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(150), nullable=False)
@@ -12,7 +13,7 @@ class Cliente(db.Model, UserMixin):
     contas = db.relationship('Conta', back_populates='cliente', cascade='all, delete-orphan')
 
     __table_args__ = (
-        UniqueConstraint('cpf', name='uq_cliente_cpf'),  # Define um nome para a constraint
+        UniqueConstraint('cpf', name='uq_cliente_cpf'),
     )
 
     def set_senha(self, senha):
