@@ -9,7 +9,7 @@ class Conta(db.Model):
     numero = db.Column(db.String(150), nullable=False)
     cliente_id = db.Column(db.Integer, db.ForeignKey('cliente.id'), nullable=False)
 
-    cliente = db.relationship('Cliente', backref=db.backref('contas', lazy=True))
+    cliente = db.relationship('Cliente', back_populates='contas')
 
     def __repr__(self):
         return f'<Conta {self.tipo} - Agencia {self.agencia} - Numero {self.numero}>'

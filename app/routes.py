@@ -18,7 +18,7 @@ def cadastrar():
         senha = request.form['senha']
         cliente = criar_cliente(nome, cpf, email, senha)
         login_user(cliente)
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.login'))
     return render_template('cadastrar.html')
 
 @bp.route('/login', methods=['GET', 'POST'])

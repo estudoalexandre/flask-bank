@@ -31,5 +31,7 @@ def create_app():
 
     from app.routes import bp
     app.register_blueprint(bp)
+    with app.app_context():
+        from app import signals
 
     return app
