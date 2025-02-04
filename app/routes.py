@@ -68,6 +68,9 @@ def transferir():
         cpf = request.form['cpf']
         conta_destino = buscar_cliente_por_cpf(cpf)
         if conta_destino:
+            if saldo > conta.saldo:
+                flash('Saldo insuficiente', 'danger')
+                return redirect(url_for('main.transferir'))
             conta.saldo -= saldo
             conta_destino.saldo += saldo
             db.session.commit()
@@ -75,3 +78,16 @@ def transferir():
         else:
             flash('CPF inválido', 'danger')
     return render_template('transferir.html')
+
+@bp.route('/sacar', methods=['GET', 'POST'])
+def sacar():
+    conta = Conta.query.filter_by(cliente_id=current_user.id).first()
+    if request.method == 'POST':
+        saldo = float(request.form['saldo'])
+        if saldo > conta.saldo:
+            flash('Saldo insuficiente', 'danger')
+            return redirect(url_for('main.sacar'))
+        conta.saldo -= saldo
+        db.session.commit()
+        return redirect(url_for('main.dashboard'))
+    return render_template('sacar.html')
