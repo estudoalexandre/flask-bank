@@ -13,3 +13,6 @@ def criar_cliente(nome, cpf, email, senha):
     db.session.commit()
     return cliente
 
+def buscar_cliente_por_cpf(cpf):
+    return Conta.query.join(Cliente).filter(Cliente.cpf == cpf).first()
+

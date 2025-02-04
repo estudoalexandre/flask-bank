@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Blueprint, redirect, url_for, request, flash
-from app.models import Cliente
+from app.models import Cliente, Conta
 from app import db
-from app.services import criar_cliente
+from app.services import criar_cliente, buscar_cliente_por_cpf
 from flask_login import login_user, login_required, logout_user, current_user
 
 
@@ -46,3 +46,32 @@ def login():
 @login_required
 def dashboard():
     return render_template('index.html')
+
+@bp.route('/depositar', methods=['GET', 'POST'])
+def depositar():
+    conta = Conta.query.filter_by(cliente_id=current_user.id).first()
+    if request.method == 'POST':
+        saldo = float(request.form['saldo'])
+        print(f"Aqui é o tipo: {type(saldo)}")
+        conta.saldo += saldo
+        db.session.commit()
+
+        return redirect(url_for('main.dashboard'))
+
+    return render_template('depositar.html')
+
+@bp.route('/transferir', methods=['GET', 'POST'])
+def transferir():
+    conta = Conta.query.filter_by(cliente_id=current_user.id).first()
+    if request.method == 'POST':
+        saldo = float(request.form['saldo'])
+        cpf = request.form['cpf']
+        conta_destino = buscar_cliente_por_cpf(cpf)
+        if conta_destino:
+            conta.saldo -= saldo
+            conta_destino.saldo += saldo
+            db.session.commit()
+            return redirect(url_for('main.dashboard'))
+        else:
+            flash('CPF inválido', 'danger')
+    return render_template('transferir.html')
