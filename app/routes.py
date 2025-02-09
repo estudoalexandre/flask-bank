@@ -7,10 +7,6 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 bp = Blueprint('main', __name__)
 
-
-
-
-
 @bp.route('/cadastrar', methods=['GET', 'POST'])
 def cadastrar():
     if request.method == 'POST':
@@ -74,10 +70,19 @@ def transferir():
             conta.saldo -= saldo
             conta_destino.saldo += saldo
             db.session.commit()
-            return redirect(url_for('main.dashboard'))
+            return redirect(url_for('main.comprovante', conta_id=conta.id, conta_destino_id=conta_destino.id, saldo=saldo))
         else:
             flash('CPF inválido', 'danger')
     return render_template('transferir.html')
+
+@bp.route('/comprovante')
+def comprovante():
+    conta_id = request.args.get('conta_id')
+    saldo = request.args.get('saldo')
+    conta_destino_id = request.args.get('conta_destino_id')
+    conta = Conta.query.get(conta_id)
+    conta_destino = Conta.query.get(conta_destino_id)
+    return render_template('comprovante.html', conta=conta, conta_destino=conta_destino, saldo=saldo)
 
 @bp.route('/sacar', methods=['GET', 'POST'])
 def sacar():
